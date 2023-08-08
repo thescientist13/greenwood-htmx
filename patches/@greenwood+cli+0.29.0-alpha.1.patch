@@ -1,0 +1,17 @@
+diff --git a/node_modules/@greenwood/cli/src/lifecycles/bundle.js b/node_modules/@greenwood/cli/src/lifecycles/bundle.js
+index e2f8630..761dc6a 100644
+--- a/node_modules/@greenwood/cli/src/lifecycles/bundle.js
++++ b/node_modules/@greenwood/cli/src/lifecycles/bundle.js
+@@ -221,7 +221,11 @@ async function bundleSsrPages(compilation) {
+               staticHtml = staticHtml.replace(\/\<content-outlet>(.*)<\\/content-outlet>\/s, data.body);
+             }
+ 
+-            return new Response(staticHtml);
++            return new Response(staticHtml, {
++              headers: new Headers({
++                'Content-Type': 'text/html'
++              })
++            });
+           }
+         `);
+ 
