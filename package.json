@@ -1,0 +1,31 @@
+{
+  "name": "greenwood-htmx",
+  "version": "1.0.0",
+  "description": "A demonstration repo for using Greenwood with htmx, hosted on Vercel.",
+  "homepage": "https://github.com/thescientist13/greenwood-htmx#readme",
+  "author": "Owen Buckley <owen@thegreenhouse.io>",
+  "license": "ISC",
+  "type": "module",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/thescientist13/greenwood-htmx.git"
+  },
+  "keywords": [
+    "Greenwood",
+    "htmx",
+    "Vercel",
+    "Serverless",
+    "SSR"
+  ],
+  "scripts": {
+    "clean": "rimraf .greenwood public",
+    "develop": "greenwood develop",
+    "build": "greenwood build",
+    "serve": "npm run clean && npm run build && greenwood serve",
+    "start": "npm run serve"
+  },
+  "devDependencies": {
+    "@greenwood/cli": "~0.29.0-alpha.1",
+    "rimraf": "^5.0.1"
+  }
+}
