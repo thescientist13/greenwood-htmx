@@ -23,7 +23,7 @@
     "build": "greenwood build",
     "serve": "npm run clean && npm run build && greenwood serve",
     "start": "npm run serve",
-    "patch-package": "^8.0.0"
+    "postinstall": "patch-package"
   },
   "dependencies": {
     "htmx.org": "^1.9.4"
