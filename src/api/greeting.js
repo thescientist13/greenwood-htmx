@@ -1,8 +1,8 @@
 export async function handler(request) {
-  console.log('API BODY@@@@', request);
-  // console.log('API BODY@@@@', await (request.clone()).formData());
-  // const formData = new FormData(request.body);
-  const formData = JSON.parse(request.body);
+  console.log('API BODY@@@@', request.body);
+  // TODO const formData = await request.formData()
+  const formData = await request.json();
+  console.log({ formData });
   const name = formData.name ? formData.name : 'Greenwood';
   const body = `Hello ${name}! 👋`;
 
