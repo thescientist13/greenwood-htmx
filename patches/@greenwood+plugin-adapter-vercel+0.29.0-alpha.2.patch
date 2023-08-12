@@ -1,0 +1,19 @@
+diff --git a/node_modules/@greenwood/plugin-adapter-vercel/src/index.js b/node_modules/@greenwood/plugin-adapter-vercel/src/index.js
+index 1553ff3..1fa94c6 100644
+--- a/node_modules/@greenwood/plugin-adapter-vercel/src/index.js
++++ b/node_modules/@greenwood/plugin-adapter-vercel/src/index.js
+@@ -11,8 +11,13 @@ function generateOutputFormat(id, type) {
+     import { handler as ${id} } from './${path}.js';
+ 
+     export default async function handler (request, response) {
+-      const { url, headers, method } = request;
++      const { body, url, headers, method } = request;
++      console.log({ url, headers, method });
++      console.log('@@@@@ REQ.BODY => ', body);
+       const req = new Request(new URL(url, \`http://\${headers.host}\`), {
++        body: ['GET', 'HEAD'].includes(method.toUpperCase())
++          ? null
++          : JSON.stringify(body),
+         headers: new Headers(headers),
+         method
+       });
