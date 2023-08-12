@@ -1,0 +1,211 @@
+diff --git a/node_modules/@greenwood/cli/src/lib/api-route-worker.js b/node_modules/@greenwood/cli/src/lib/api-route-worker.js
+index 5a87470..a00b3bc 100644
+--- a/node_modules/@greenwood/cli/src/lib/api-route-worker.js
++++ b/node_modules/@greenwood/cli/src/lib/api-route-worker.js
+@@ -33,7 +33,15 @@ async function responseAsObject (response) {
+ 
+ async function executeRouteModule({ href, request }) {
+   const { handler } = await import(href);
+-  const response = await handler(request);
++  const { headers, body, method } = request;
++  // TODO is a double request needed here?
++  const response = await handler(new Request(new Request(href, {
++    body: ['GET', 'HEAD'].includes(method.toUpperCase())
++      ? null
++      : body,
++    method,
++    headers
++  })));
+ 
+   parentPort.postMessage(await responseAsObject(response));
+ }
+diff --git a/node_modules/@greenwood/cli/src/lifecycles/serve.js b/node_modules/@greenwood/cli/src/lifecycles/serve.js
+index 8c3fc08..58c83af 100644
+--- a/node_modules/@greenwood/cli/src/lifecycles/serve.js
++++ b/node_modules/@greenwood/cli/src/lifecycles/serve.js
+@@ -4,9 +4,13 @@ import Koa from 'koa';
+ import { checkResourceExists, mergeResponse } from '../lib/resource-utils.js';
+ import { Readable } from 'stream';
+ import { ResourceInterface } from '../lib/resource-interface.js';
++import { koaBody } from 'koa-body';
+ 
+ async function getDevServer(compilation) {
+   const app = new Koa();
++
++  app.use(koaBody());
++
+   const compilationCopy = Object.assign({}, compilation);
+   const resourcePlugins = [
+     // Greenwood default standard resource and import plugins
+@@ -34,10 +38,15 @@ async function getDevServer(compilation) {
+   app.use(async (ctx, next) => {
+     try {
+       const url = new URL(`http://localhost:${compilation.config.port}${ctx.url}`);
++      const { body, method, header } = ctx.request;
+       const initRequest = new Request(url, {
+-        method: ctx.request.method,
+-        headers: new Headers(ctx.request.header)
++        body: ['GET', 'HEAD'].includes(method.toUpperCase())
++          ? null
++          : JSON.stringify(body),
++        method,
++        headers: new Headers(header)
+       });
++
+       const request = await resourcePlugins.reduce(async (requestPromise, plugin) => {
+         const intermediateRequest = await requestPromise;
+         return plugin.shouldResolve && await plugin.shouldResolve(url, intermediateRequest.clone())
+@@ -58,9 +67,15 @@ async function getDevServer(compilation) {
+   app.use(async (ctx, next) => {
+     try {
+       const url = new URL(ctx.url);
+-      const { method, header } = ctx.request;
++      const { body, method, header } = ctx.request;
+       const { status } = ctx.response;
+-      const request = new Request(url.href, { method, headers: new Headers(header) });
++      const request = new Request(url.href, { 
++        body: ['GET', 'HEAD'].includes(method.toUpperCase())
++          ? null
++          : JSON.stringify(body),
++        method,
++        headers: new Headers(header)
++      });
+       let response = new Response(null, { status });
+ 
+       for (const plugin of resourcePlugins) {
+@@ -94,9 +109,13 @@ async function getDevServer(compilation) {
+   app.use(async (ctx, next) => {
+     try {
+       const url = new URL(ctx.url);
++      const { body, method, header } = ctx.request;
+       const request = new Request(url, {
+-        method: ctx.request.method,
+-        headers: new Headers(ctx.request.header)
++        body: ['GET', 'HEAD'].includes(method.toUpperCase())
++          ? null
++          : JSON.stringify(body),
++        method,
++        headers: new Headers(header)
+       });
+       const initResponse = new Response(ctx.body, {
+         status: ctx.response.status,
+@@ -210,9 +229,13 @@ async function getStaticServer(compilation, composable) {
+   app.use(async (ctx, next) => {
+     try {
+       const url = new URL(`http://localhost:${port}${ctx.url}`);
++      const { body, method, header } = ctx.request;
+       const request = new Request(url, {
+-        method: ctx.request.method,
+-        headers: ctx.request.header
++        body: ['GET', 'HEAD'].includes(method.toUpperCase())
++          ? null
++          : JSON.stringify(body),
++        method,
++        headers: new Headers(header)
+       });
+ 
+       if (compilation.config.devServer.proxy) {
+@@ -238,6 +261,7 @@ async function getStaticServer(compilation, composable) {
+   app.use(async (ctx, next) => {
+     try {
+       const url = new URL(`.${ctx.url}`, outputDir.href);
++      const { body, method, header } = ctx.request;
+ 
+       if (await checkResourceExists(url)) {
+         const resourcePlugins = standardResourcePlugins
+@@ -247,7 +271,11 @@ async function getStaticServer(compilation, composable) {
+           });
+ 
+         const request = new Request(url.href, {
+-          headers: new Headers(ctx.request.header)
++          body: ['GET', 'HEAD'].includes(method.toUpperCase())
++            ? null
++            : JSON.stringify(body),
++          method,
++          headers: new Headers(header)
+         });
+         const initResponse = new Response(ctx.body, {
+           status: ctx.response.status,
+@@ -289,14 +317,20 @@ async function getHybridServer(compilation) {
+   const { outputDir } = context;
+   const app = await getStaticServer(compilation, true);
+ 
++  app.use(koaBody());
++
+   app.use(async (ctx) => {
+     try {
+       const url = new URL(`http://localhost:${config.port}${ctx.url}`);
+       const matchingRoute = graph.find((node) => node.route === url.pathname) || { data: {} };
+       const isApiRoute = manifest.apis.has(url.pathname);
++      const { body, method, header } = ctx.request;
+       const request = new Request(url.href, {
+-        method: ctx.request.method,
+-        headers: ctx.request.header
++        body: ['GET', 'HEAD'].includes(method.toUpperCase())
++          ? null
++          : JSON.stringify(body),
++        method,
++        headers: new Headers(header)
+       });
+ 
+       if (!config.prerender && matchingRoute.isSSR && !matchingRoute.data.static) {
+diff --git a/node_modules/@greenwood/cli/src/plugins/resource/plugin-api-routes.js b/node_modules/@greenwood/cli/src/plugins/resource/plugin-api-routes.js
+index 66eef9d..a6baf52 100644
+--- a/node_modules/@greenwood/cli/src/plugins/resource/plugin-api-routes.js
++++ b/node_modules/@greenwood/cli/src/plugins/resource/plugin-api-routes.js
+@@ -4,17 +4,18 @@
+  *
+  */
+ import { ResourceInterface } from '../../lib/resource-interface.js';
++import { Readable } from 'stream';
+ import { Worker } from 'worker_threads';
+ 
+ // https://stackoverflow.com/questions/57447685/how-can-i-convert-a-request-object-into-a-stringifiable-object-in-javascript
+-function requestAsObject (request) {
+-  if (!request instanceof Request) {
++async function requestAsObject (_request) {
++  if (!_request instanceof Request) {
+     throw Object.assign(
+       new Error(),
+       { name: 'TypeError', message: 'Argument must be a Request object' }
+     );
+   }
+-  request = request.clone();
++  const request = _request.clone();
+ 
+   function stringifiableObject (obj) {
+     const filtered = {};
+@@ -29,6 +30,7 @@ function requestAsObject (request) {
+   // TODO handle full response
+   // https://github.com/ProjectEvergreen/greenwood/issues/1048
+   return {
++    body: await request.text(),
+     ...stringifiableObject(request),
+     headers: Object.fromEntries(request.headers),
+     signal: stringifiableObject(request.signal)
+@@ -51,17 +53,22 @@ class ApiRoutesResource extends ResourceInterface {
+     const api = this.compilation.manifest.apis.get(url.pathname);
+     const apiUrl = new URL(`.${api.path}`, this.compilation.context.userWorkspace);
+     const href = apiUrl.href;
++    const { headers, body, method } = request;
+     const req = new Request(new URL(url), {
+-      ...request
++      body: ['GET', 'HEAD'].includes(method.toUpperCase())
++        ? null
++        : JSON.stringify(body),
++      method,
++      headers
+     });
+ 
+     // TODO does this ever run in anything but development mode?
+     if (process.env.__GWD_COMMAND__ === 'develop') { // eslint-disable-line no-underscore-dangle
+       const workerUrl = new URL('../../lib/api-route-worker.js', import.meta.url);
+ 
+-      const response = await new Promise((resolve, reject) => {
++      const response = await new Promise(async (resolve, reject) => {
+         const worker = new Worker(workerUrl);
+-        const req = requestAsObject(request);
++        const req = await requestAsObject(request);
+ 
+         worker.on('message', (result) => {
+           resolve(result);
