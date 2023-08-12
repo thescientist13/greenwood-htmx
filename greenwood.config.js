@@ -1,4 +1,4 @@
-import { greenwoodPluginAdapterVercel } from './adapter-vercel.js';
+import { greenwoodPluginAdapterVercel } from '@greenwood/plugin-adapter-vercel';
 
 export default {
   plugins: [

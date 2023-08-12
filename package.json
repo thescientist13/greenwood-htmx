@@ -22,12 +22,11 @@
     "develop": "greenwood develop",
     "build": "greenwood build",
     "serve": "npm run clean && npm run build && greenwood serve",
-    "start": "npm run serve",
-    "postinstall": "patch-package"
+    "start": "npm run serve"
   },
   "devDependencies": {
-    "@greenwood/cli": "~0.29.0-alpha.1",
-    "patch-package": "^8.0.0",
+    "@greenwood/cli": "~0.29.0-alpha.2",
+    "@greenwood/plugin-adapter-vercel": "~0.29.0-alpha.2",
     "rimraf": "^5.0.1"
   }
 }
