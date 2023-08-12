@@ -25,7 +25,8 @@
     "start": "npm run serve"
   },
   "devDependencies": {
-    "@greenwood/cli": "~0.29.0-alpha.1",
+    "@greenwood/cli": "~0.29.0-alpha.2",
+    "@greenwood/plugin-adapter-vercel": "~0.29.0-alpha.2",
     "rimraf": "^5.0.1"
   }
 }
