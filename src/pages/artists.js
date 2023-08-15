@@ -21,7 +21,7 @@ export default class ArtistsPage extends HTMLElement {
       <p>This is an example of a Greenwood SSR page route server-rendering Web Components; the same Card component used for the Fragments API demo on the home page in fact!  Greenwood is also statically bundling the share template (written in HTML) so that you can still share page templates even within SSR pages.</p>
 
       <h3>List of Artists: ${artists.length}</h3>
-      <div class="artists-cards-contianer">
+      <div class="artists-cards-container">
         ${html}
       </div>
     `;

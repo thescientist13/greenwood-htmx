@@ -1,5 +1,5 @@
 function getMessage(name) {
-  return `Hello ${name}!`;
+  return `Hello ${name}! 👋`;
 }
 
 export {
