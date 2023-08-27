@@ -11,7 +11,7 @@ export async function handler(request) {
   let body = '';
 
   if (artists.length === 0) {
-    body = 'No results found.';
+    body = '<span class="no-results">No results found.<span>';
   } else {
     const { html } = await renderFromHTML(`
       ${
