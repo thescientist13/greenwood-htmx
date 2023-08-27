@@ -12,14 +12,16 @@
   },
   "keywords": [
     "Greenwood",
+    "Web Components",
+    "HTML",
     "htmx",
     "Vercel",
     "Serverless",
     "SSR"
   ],
   "scripts": {
-    "clean": "rimraf .greenwood public",
-    "develop": "greenwood develop",
+    "clean": "rimraf .greenwood public .vercel",
+    "dev": "greenwood develop",
     "build": "greenwood build",
     "serve": "npm run clean && npm run build && greenwood serve",
     "start": "npm run serve",
@@ -29,9 +31,8 @@
     "htmx.org": "^1.9.4"
   },
   "devDependencies": {
-    "@greenwood/cli": "~0.29.0-alpha.2",
-    "@greenwood/plugin-adapter-vercel": "~0.29.0-alpha.2",
-    "koa-body": "^6.0.1",
+    "@greenwood/cli": "~0.29.0-alpha.3",
+    "@greenwood/plugin-adapter-vercel": "~0.29.0-alpha.3",
     "patch-package": "^8.0.0",
     "rimraf": "^5.0.1"
   }
