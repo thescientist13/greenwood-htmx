@@ -8,6 +8,7 @@
     <link rel="icon" href="/favicon.ico"/>
 
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro">
+    <script src="/node_modules/htmx.org/dist/htmx.js"></script>
     <style>
       :root, :host {
         --color-white: white;
@@ -108,6 +109,17 @@
           margin: 10px;
         }
       }
+
+      .htmx-indicator {
+        opacity: 0;
+        transition: opacity 500ms ease-in;
+      }
+      .htmx-request .htmx-indicator {
+        opacity: 1;
+      }
+      .htmx-request.htmx-indicator {
+        opacity: 1;
+      }
     </style>
 
     <script type="module" src="./components/card.js"></script>
@@ -118,7 +130,8 @@
       <nav>
         <ul>
           <li><a href="/">Home</a> | </li>
-          <li><a href="/artists/">Artists</a></li>
+          <li><a href="/artists/">Artists</a> | </li>
+          <li><a href="/search/">Search</a></li>
         </ul>
       </nav>
     </header>
