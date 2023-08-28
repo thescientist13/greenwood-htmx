@@ -1,0 +1,126 @@
+diff --git a/node_modules/@greenwood/cli/src/config/rollup.config.js b/node_modules/@greenwood/cli/src/config/rollup.config.js
+index df59ef6..07f3e0d 100644
+--- a/node_modules/@greenwood/cli/src/config/rollup.config.js
++++ b/node_modules/@greenwood/cli/src/config/rollup.config.js
+@@ -155,6 +155,7 @@ function greenwoodPatchSsrPagesEntryPointRuntimeImport() {
+ }
+ 
+ const getRollupConfigForScriptResources = async (compilation) => {
++  console.log('##### getRollupConfigForScriptResources');
+   const { outputDir } = compilation.context;
+   const input = [...compilation.resources.values()]
+     .filter(resource => resource.type === 'script')
+@@ -212,9 +213,15 @@ const getRollupConfigForScriptResources = async (compilation) => {
+ };
+ 
+ const getRollupConfigForApis = async (compilation) => {
++  console.log('##### getRollupConfigForApis');
+   const { outputDir, userWorkspace } = compilation.context;
+   const input = [...compilation.manifest.apis.values()]
+     .map(api => normalizePathnameForWindows(new URL(`.${api.path}`, userWorkspace)));
++  const customRollupPlugins = compilation.config.plugins.filter(plugin => {
++      return plugin.type === 'rollup';
++    }).map(plugin => {
++      return plugin.provider(compilation);
++    }).flat();
+   
+   // TODO should routes and APIs have chunks?
+   // https://github.com/ProjectEvergreen/greenwood/issues/1118
+@@ -229,13 +236,20 @@ const getRollupConfigForApis = async (compilation) => {
+       greenwoodJsonLoader(),
+       nodeResolve(),
+       commonjs(),
+-      importMetaAssets()
++      importMetaAssets(),
++      ...customRollupPlugins,
+     ]
+   }];
+ };
+ 
+ const getRollupConfigForSsr = async (compilation, input) => {
++  console.log('##### getRollupConfigForSsr');
+   const { outputDir } = compilation.context;
++  const customRollupPlugins = compilation.config.plugins.filter(plugin => {
++    return plugin.type === 'rollup';
++  }).map(plugin => {
++    return plugin.provider(compilation);
++  }).flat();
+ 
+   // TODO should routes and APIs have chunks?
+   // https://github.com/ProjectEvergreen/greenwood/issues/1118
+@@ -247,6 +261,8 @@ const getRollupConfigForSsr = async (compilation, input) => {
+       chunkFileNames: '[name].[hash].js'
+     },
+     plugins: [
++      // greenwoodJsonLoader(),
++      // greenwoodResourceLoader(compilation),
+       greenwoodJsonLoader(),
+       // TODO let this through for lit to enable nodeResolve({ preferBuiltins: true })
+       // https://github.com/lit/lit/issues/449
+@@ -255,6 +271,7 @@ const getRollupConfigForSsr = async (compilation, input) => {
+         preferBuiltins: true
+       }),
+       commonjs(),
++      ...customRollupPlugins,
+       importMetaAssets(),
+       greenwoodPatchSsrPagesEntryPointRuntimeImport() // TODO a little hacky but works for now
+     ],
+diff --git a/node_modules/@greenwood/cli/src/loader.js b/node_modules/@greenwood/cli/src/loader.js
+index 7955b24..856902e 100644
+--- a/node_modules/@greenwood/cli/src/loader.js
++++ b/node_modules/@greenwood/cli/src/loader.js
+@@ -46,7 +46,12 @@ async function getCustomLoaderResponse(url, body = '', checkOnly = false) {
+ // https://nodejs.org/docs/latest-v18.x/api/esm.html#resolvespecifier-context-nextresolve
+ export async function resolve(specifier, context, defaultResolve) {
+   const { parentURL } = context;
+-  const { shouldHandle } = await getCustomLoaderResponse(new URL(specifier), null, true);
++  console.log({ specifier, context, parentURL })
++  const x = specifier.startsWith('file://')
++    ? new URL(specifier)
++    : new URL(specifier, parentURL);
++  console.log({ x });
++  const { shouldHandle } = await getCustomLoaderResponse(x, null, true);
+ 
+   if (shouldHandle) {
+     return {
+@@ -60,22 +65,26 @@ export async function resolve(specifier, context, defaultResolve) {
+ 
+ // https://nodejs.org/docs/latest-v18.x/api/esm.html#loadurl-context-nextload
+ export async function load(source, context, defaultLoad) {
+-  const extension = source.split('.').pop();
+-  const url = new URL('', `${source}?type=${extension}`);
+-  const { shouldHandle } = await getCustomLoaderResponse(url, null, true);
++  console.log('LOAD', { source, context });
++  if (source.startsWith('file://')) {
++    const extension = source.split('.').pop();
++    const url = new URL(`${source}?type=${extension}`);
++    const { shouldHandle } = await getCustomLoaderResponse(url, null, true);
+ 
+-  if (shouldHandle) {
+-    const contents = await fs.readFile(new URL(source), 'utf-8');
+-    const { response } = await getCustomLoaderResponse(url, contents);
+-    const body = await response.text();
++    console.log('should handle?????', shouldHandle);
++    if (shouldHandle) {
++      const contents = await fs.readFile(new URL(source), 'utf-8');
++      const { response } = await getCustomLoaderResponse(url, contents);
++      const body = await response.text();
+ 
+-    // TODO better way to handle remove export default?  leverage import assertions instead
+-    // https://github.com/ProjectEvergreen/greenwood/issues/923
+-    return {
+-      format: extension === 'json' ? 'json' : 'module',
+-      source: extension === 'json' ? JSON.stringify(JSON.parse(contents.replace('export default ', ''))) : body,
+-      shortCircuit: true
+-    };
++      // TODO better way to handle remove export default?  leverage import assertions instead
++      // https://github.com/ProjectEvergreen/greenwood/issues/923
++      return {
++        format: extension === 'json' ? 'json' : 'module',
++        source: extension === 'json' ? JSON.stringify(JSON.parse(contents.replace('export default ', ''))) : body,
++        shortCircuit: true
++      };
++    }
+   }
+ 
+   return defaultLoad(source, context, defaultLoad);
