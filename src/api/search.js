@@ -1,26 +1,27 @@
 import { renderFromHTML } from 'wc-compiler';
-import { getArtists } from '../services/artists.js';
+import { getProducts } from '../services/products.js';
 
 export async function handler(request) {
   const formData = await request.formData();
   const term = formData.has('term') ? formData.get('term') : '';
-  const artists = (await getArtists())
-    .filter((artist => {
-      return term !== '' && artist.name.toLowerCase().includes(term.toLowerCase());
+  const products = (await getProducts())
+    .filter((product => {
+      return term !== '' && product.title.toLowerCase().includes(term.toLowerCase());
     }));
   let body = '';
 
-  if (artists.length === 0) {
+  if (products.length === 0) {
     body = '<span class="no-results">No results found.</span>';
   } else {
     const { html } = await renderFromHTML(`
       ${
-        artists.map((item, idx) => {
-          const { name, imageUrl } = item;
+        products.map((item, idx) => {
+          const { title, thumbnail } = item;
+
           return `
             <app-card
-              title="${idx + 1}) ${name}"
-              thumbnail="${imageUrl}"
+              title="${idx + 1}) ${title}"
+              thumbnail="${thumbnail}"
             ></app-card>
           `;
         }).join('')

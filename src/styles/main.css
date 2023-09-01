@@ -84,7 +84,7 @@ article {
   margin: 4rem 0;
 }
 
-.artists-cards-container {
+.products-cards-container {
   display: flex;
   flex-wrap: wrap;
   gap: 1rem;
