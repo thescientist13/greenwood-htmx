@@ -1,14 +1,14 @@
 diff --git a/node_modules/@web/rollup-plugin-import-meta-assets/src/rollup-plugin-import-meta-assets.js b/node_modules/@web/rollup-plugin-import-meta-assets/src/rollup-plugin-import-meta-assets.js
-index 1d0280c..706488a 100644
+index 1d0280c..f4aeb21 100644
 --- a/node_modules/@web/rollup-plugin-import-meta-assets/src/rollup-plugin-import-meta-assets.js
 +++ b/node_modules/@web/rollup-plugin-import-meta-assets/src/rollup-plugin-import-meta-assets.js
-@@ -58,10 +58,13 @@ function importMetaAssets({ include, exclude, warnOnError, transform } = {}) {
+@@ -58,10 +58,14 @@ function importMetaAssets({ include, exclude, warnOnError, transform } = {}) {
      name: 'rollup-plugin-import-meta-assets',
  
      async transform(code, id) {
--      if (!filter(id)) {
-+      console.log({ id, code });
-+      if (!filter(id) || !id.endsWith('.js')) {
++      console.log({ id });
+       if (!filter(id)) {
++        console.log('NULL @@@@@', { code });
          return null;
        }
  

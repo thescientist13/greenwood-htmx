@@ -1,8 +1,35 @@
 diff --git a/node_modules/@greenwood/cli/src/config/rollup.config.js b/node_modules/@greenwood/cli/src/config/rollup.config.js
-index df59ef6..07f3e0d 100644
+index df59ef6..9eedbc8 100644
 --- a/node_modules/@greenwood/cli/src/config/rollup.config.js
 +++ b/node_modules/@greenwood/cli/src/config/rollup.config.js
-@@ -155,6 +155,7 @@ function greenwoodPatchSsrPagesEntryPointRuntimeImport() {
+@@ -10,10 +10,14 @@ function greenwoodJsonLoader() {
+   return {
+     name: 'greenwood-json-loader',
+     async load(id) {
+-      const extension = id.split('.').pop();
++      console.log({ id });
++      const extension = id.split('.').pop().replace('?commonjs-proxy', '');
++      console.log({ extension });
+ 
+       if (extension === 'json') {
+-        const url = new URL(`file://${id}`);
++        console.log('GO!  ---> ', id.replace('?commonjs-proxy', ''));
++        const url = new URL(`file://${id.replace('?commonjs-proxy', '').replace('\x00', '')}`);
++        console.log({ url });
+         const json = JSON.parse(await fs.readFile(url, 'utf-8'));
+         const contents = `export default ${JSON.stringify(json)}`;
+ 
+@@ -50,7 +54,8 @@ function greenwoodResourceLoader (compilation) {
+       const extension = pathname.split('.').pop();
+ 
+       if (extension !== '' && extension !== 'js') {
+-        const url = new URL(`file://${pathname}?type=${extension}`);
++        console.log({ extension, pathname })
++        const url = new URL(`file://${pathname.replace('\x00', '')}?type=${extension}`);
+         const request = new Request(url.href);
+         let response = new Response('');
+ 
+@@ -155,6 +160,7 @@ function greenwoodPatchSsrPagesEntryPointRuntimeImport() {
  }
  
  const getRollupConfigForScriptResources = async (compilation) => {
@@ -10,7 +37,7 @@ index df59ef6..07f3e0d 100644
    const { outputDir } = compilation.context;
    const input = [...compilation.resources.values()]
      .filter(resource => resource.type === 'script')
-@@ -212,9 +213,15 @@ const getRollupConfigForScriptResources = async (compilation) => {
+@@ -212,9 +218,15 @@ const getRollupConfigForScriptResources = async (compilation) => {
  };
  
  const getRollupConfigForApis = async (compilation) => {
@@ -23,10 +50,10 @@ index df59ef6..07f3e0d 100644
 +    }).map(plugin => {
 +      return plugin.provider(compilation);
 +    }).flat();
-   
+ 
    // TODO should routes and APIs have chunks?
    // https://github.com/ProjectEvergreen/greenwood/issues/1118
-@@ -229,13 +236,20 @@ const getRollupConfigForApis = async (compilation) => {
+@@ -229,13 +241,22 @@ const getRollupConfigForApis = async (compilation) => {
        greenwoodJsonLoader(),
        nodeResolve(),
        commonjs(),
@@ -45,26 +72,32 @@ index df59ef6..07f3e0d 100644
 +  }).map(plugin => {
 +    return plugin.provider(compilation);
 +  }).flat();
++
++  console.log({ customRollupPlugins });
  
    // TODO should routes and APIs have chunks?
    // https://github.com/ProjectEvergreen/greenwood/issues/1118
-@@ -247,6 +261,8 @@ const getRollupConfigForSsr = async (compilation, input) => {
-       chunkFileNames: '[name].[hash].js'
+@@ -248,6 +269,7 @@ const getRollupConfigForSsr = async (compilation, input) => {
      },
      plugins: [
-+      // greenwoodJsonLoader(),
-+      // greenwoodResourceLoader(compilation),
        greenwoodJsonLoader(),
++      greenwoodResourceLoader(compilation),
        // TODO let this through for lit to enable nodeResolve({ preferBuiltins: true })
        // https://github.com/lit/lit/issues/449
-@@ -255,6 +271,7 @@ const getRollupConfigForSsr = async (compilation, input) => {
+       // https://github.com/ProjectEvergreen/greenwood/issues/1118
+@@ -255,7 +277,11 @@ const getRollupConfigForSsr = async (compilation, input) => {
          preferBuiltins: true
        }),
        commonjs(),
-+      ...customRollupPlugins,
-       importMetaAssets(),
+-      importMetaAssets(),
++      importMetaAssets({
++        // include: ['*.js'],
++        // exclude: ['*.css', '*.json'],
++      }),
++      // ...customRollupPlugins,
        greenwoodPatchSsrPagesEntryPointRuntimeImport() // TODO a little hacky but works for now
      ],
+     onwarn: (errorObj) => {
 diff --git a/node_modules/@greenwood/cli/src/loader.js b/node_modules/@greenwood/cli/src/loader.js
 index 7955b24..856902e 100644
 --- a/node_modules/@greenwood/cli/src/loader.js
