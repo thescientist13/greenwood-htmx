@@ -1,0 +1,111 @@
+:root, :host {
+  --color-white: white;
+  --color-accent: #3c384d;
+}
+
+body {
+  padding: 0;
+  margin: 0;
+  border: 0;
+  font-family: 'Source Sans Pro', serif;
+  line-height: 1.4;
+  background: #fbfbfb;
+}
+
+header, footer {
+  color: var(--color-white);
+  background-color: rgb(25, 42, 39);
+  text-align: center;
+  height: 50px;
+  padding: 15px 0 0;
+}
+
+footer a {
+  margin: 7px 0 0 0;
+  text-decoration: underline;
+  color: var(--color-white);
+}
+
+header a {
+  color: var(--color-white);
+}
+
+a {
+  color: var(--color-accent);
+}
+
+p {
+  margin: 20px auto;
+  width: 50%;
+}
+
+header nav ul {
+  margin: 0;
+  padding: 0;
+  text-align: center;
+  font-size: 1.5rem;
+}
+
+header nav ul li {
+  display: inline;
+}
+
+main {
+  text-align: center;
+  min-height: 100vh;
+}
+
+h2 {
+  text-align: center;
+  text-decoration: underline;
+}
+
+button {
+  background: var(--color-accent);
+  color: var(--color-white);
+  padding: 1rem 2rem;
+  border: 0;
+  font-size: 1rem;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+input {
+  padding: 1rem;
+  margin: 0 10px;
+  font-size: 16px;
+}
+
+label {
+  font-size: 1.35rem;
+}
+
+article {
+  margin: 4rem 0;
+}
+
+.artists-cards-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  justify-content: center;
+  align-items: baseline;
+  margin: 2rem 0;
+}
+
+@media(max-width: 768px) {
+  button {
+    margin: 10px;
+  }
+}
+
+.htmx-indicator {
+  opacity: 0;
+  transition: opacity 500ms ease-in;
+}
+.htmx-request .htmx-indicator {
+  opacity: 1;
+}
+.htmx-request.htmx-indicator {
+  opacity: 1;
+}
