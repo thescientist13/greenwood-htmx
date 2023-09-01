@@ -24,16 +24,14 @@
     "dev": "greenwood develop",
     "build": "greenwood build",
     "serve": "npm run clean && npm run build && greenwood serve",
-    "start": "npm run serve",
-    "postinstall": "patch-package"
+    "start": "npm run serve"
   },
   "dependencies": {
     "htmx.org": "^1.9.4"
   },
   "devDependencies": {
-    "@greenwood/cli": "~0.29.0-alpha.3",
-    "@greenwood/plugin-adapter-vercel": "~0.29.0-alpha.3",
-    "patch-package": "^8.0.0",
+    "@greenwood/cli": "~0.29.0-alpha.4",
+    "@greenwood/plugin-adapter-vercel": "~0.29.0-alpha.4",
     "rimraf": "^5.0.1"
   }
 }
