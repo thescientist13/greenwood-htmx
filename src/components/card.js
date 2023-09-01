@@ -1,7 +1,7 @@
 export default class Card extends HTMLElement {
 
-  selectArtist() {
-    alert(`selected artist is => ${this.getAttribute('title')}!`);
+  selectItem() {
+    alert(`selected item is => ${this.getAttribute('title')}!`);
   }
 
   connectedCallback() {
@@ -24,6 +24,7 @@ export default class Card extends HTMLElement {
             height: 680px;
             justify-content: space-between;
             background-color: #fff;
+            overflow-x: hidden;
           }
           button {
             background: var(--color-accent);
@@ -56,7 +57,7 @@ export default class Card extends HTMLElement {
         <div>
           <h3>${title}</h3>
           <img src="${thumbnail}" alt="${title}" loading="lazy" width="100%">
-          <button onclick="this.parentNode.parentNode.host.selectArtist()">View Artist Details</button>
+          <button onclick="this.parentNode.parentNode.host.selectItem()">View Item Details</button>
         </div>
       `;
       this.attachShadow({ mode: 'open' });
