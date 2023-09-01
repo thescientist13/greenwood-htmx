@@ -7,7 +7,7 @@ You can see it running live at [https://greenwood-htmx.vercel.app](https://green
 ## Setup
 
 1. Clone the repo
-1. Have Node >= `18.x` installed (if you **nvm**, run `nvm use`)
+1. Have Node >= `18.x` installed (if you have **nvm**, run `nvm use`)
 1. Run `npm ci`
 
 You can run the following
