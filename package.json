@@ -33,6 +33,7 @@
   "devDependencies": {
     "@greenwood/cli": "~0.29.0-alpha.4",
     "@greenwood/plugin-adapter-vercel": "~0.29.0-alpha.4",
+    "@greenwood/plugin-import-css": "~0.29.0-alpha.4",
     "patch-package": "^8.0.0",
     "rimraf": "^5.0.1"
   }
