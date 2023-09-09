@@ -1,5 +1,5 @@
 diff --git a/node_modules/@web/rollup-plugin-import-meta-assets/src/rollup-plugin-import-meta-assets.js b/node_modules/@web/rollup-plugin-import-meta-assets/src/rollup-plugin-import-meta-assets.js
-index 1d0280c..93ce4a1 100644
+index 1d0280c..5b623e1 100644
 --- a/node_modules/@web/rollup-plugin-import-meta-assets/src/rollup-plugin-import-meta-assets.js
 +++ b/node_modules/@web/rollup-plugin-import-meta-assets/src/rollup-plugin-import-meta-assets.js
 @@ -58,10 +58,13 @@ function importMetaAssets({ include, exclude, warnOnError, transform } = {}) {
@@ -24,11 +24,12 @@ index 1d0280c..93ce4a1 100644
              try {
                const assetContents = await fs.promises.readFile(absoluteAssetPath);
                const transformedAssetContents =
-@@ -83,11 +87,20 @@ function importMetaAssets({ include, exclude, warnOnError, transform } = {}) {
+@@ -83,11 +87,21 @@ function importMetaAssets({ include, exclude, warnOnError, transform } = {}) {
                if (transformedAssetContents === null) {
                  return;
                }
 +              // https://github.com/rollup/rollup/blob/v2.79.1/docs/05-plugin-development.md#thisemitfile
++              // TODO chunk (.js) vs asset (not .js)?
                const ref = this.emitFile({
 -                type: 'asset',
 -                name: assetName,
@@ -48,7 +49,7 @@ index 1d0280c..93ce4a1 100644
                magicString.overwrite(
                  node.arguments[0].start,
                  node.arguments[0].end,
-@@ -105,6 +118,8 @@ function importMetaAssets({ include, exclude, warnOnError, transform } = {}) {
+@@ -105,6 +119,8 @@ function importMetaAssets({ include, exclude, warnOnError, transform } = {}) {
          },
        });
  

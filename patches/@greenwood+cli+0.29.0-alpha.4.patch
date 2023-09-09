@@ -1,25 +1,28 @@
 diff --git a/node_modules/@greenwood/cli/src/config/rollup.config.js b/node_modules/@greenwood/cli/src/config/rollup.config.js
-index df59ef6..5ea6ef5 100644
+index df59ef6..36ae428 100644
 --- a/node_modules/@greenwood/cli/src/config/rollup.config.js
 +++ b/node_modules/@greenwood/cli/src/config/rollup.config.js
-@@ -10,10 +10,14 @@ function greenwoodJsonLoader() {
+@@ -10,10 +10,17 @@ function greenwoodJsonLoader() {
    return {
      name: 'greenwood-json-loader',
      async load(id) {
 -      const extension = id.split('.').pop();
 +      console.log({ id });
++      // const extension = id.split('.').pop();
 +      const extension = id.split('.').pop().replace('?commonjs-proxy', '');
 +      console.log({ extension });
  
        if (extension === 'json') {
 -        const url = new URL(`file://${id}`);
 +        console.log('GO!  ---> ', id.replace('?commonjs-proxy', ''));
++        // https://github.com/rollup/rollup/issues/2121
 +        const url = new URL(`file://${id.replace('?commonjs-proxy', '').replace('\x00', '')}`);
++        // const url = new URL(`file://${id}`);
 +        console.log({ url });
          const json = JSON.parse(await fs.readFile(url, 'utf-8'));
          const contents = `export default ${JSON.stringify(json)}`;
  
-@@ -50,7 +54,8 @@ function greenwoodResourceLoader (compilation) {
+@@ -50,7 +57,8 @@ function greenwoodResourceLoader (compilation) {
        const extension = pathname.split('.').pop();
  
        if (extension !== '' && extension !== 'js') {
@@ -29,7 +32,7 @@ index df59ef6..5ea6ef5 100644
          const request = new Request(url.href);
          let response = new Response('');
  
-@@ -155,6 +160,7 @@ function greenwoodPatchSsrPagesEntryPointRuntimeImport() {
+@@ -155,6 +163,7 @@ function greenwoodPatchSsrPagesEntryPointRuntimeImport() {
  }
  
  const getRollupConfigForScriptResources = async (compilation) => {
@@ -37,7 +40,7 @@ index df59ef6..5ea6ef5 100644
    const { outputDir } = compilation.context;
    const input = [...compilation.resources.values()]
      .filter(resource => resource.type === 'script')
-@@ -212,10 +218,20 @@ const getRollupConfigForScriptResources = async (compilation) => {
+@@ -212,10 +221,20 @@ const getRollupConfigForScriptResources = async (compilation) => {
  };
  
  const getRollupConfigForApis = async (compilation) => {
@@ -59,7 +62,7 @@ index df59ef6..5ea6ef5 100644
    // TODO should routes and APIs have chunks?
    // https://github.com/ProjectEvergreen/greenwood/issues/1118
    return [{
-@@ -225,17 +241,29 @@ const getRollupConfigForApis = async (compilation) => {
+@@ -225,17 +244,29 @@ const getRollupConfigForApis = async (compilation) => {
        entryFileNames: '[name].js',
        chunkFileNames: '[name].[hash].js'
      },
@@ -90,7 +93,7 @@ index df59ef6..5ea6ef5 100644
  
    // TODO should routes and APIs have chunks?
    // https://github.com/ProjectEvergreen/greenwood/issues/1118
-@@ -248,6 +276,7 @@ const getRollupConfigForSsr = async (compilation, input) => {
+@@ -248,6 +279,7 @@ const getRollupConfigForSsr = async (compilation, input) => {
      },
      plugins: [
        greenwoodJsonLoader(),
@@ -99,7 +102,7 @@ index df59ef6..5ea6ef5 100644
        // https://github.com/lit/lit/issues/449
        // https://github.com/ProjectEvergreen/greenwood/issues/1118
 diff --git a/node_modules/@greenwood/cli/src/loader.js b/node_modules/@greenwood/cli/src/loader.js
-index 7955b24..964ab71 100644
+index 7955b24..57f3464 100644
 --- a/node_modules/@greenwood/cli/src/loader.js
 +++ b/node_modules/@greenwood/cli/src/loader.js
 @@ -46,7 +46,12 @@ async function getCustomLoaderResponse(url, body = '', checkOnly = false) {
@@ -116,44 +119,27 @@ index 7955b24..964ab71 100644
  
    if (shouldHandle) {
      return {
-@@ -60,22 +65,26 @@ export async function resolve(specifier, context, defaultResolve) {
+@@ -60,10 +65,13 @@ export async function resolve(specifier, context, defaultResolve) {
  
  // https://nodejs.org/docs/latest-v18.x/api/esm.html#loadurl-context-nextload
  export async function load(source, context, defaultLoad) {
--  const extension = source.split('.').pop();
--  const url = new URL('', `${source}?type=${extension}`);
--  const { shouldHandle } = await getCustomLoaderResponse(url, null, true);
 +  // console.log('LOAD', { source, context });
-+  if (source.startsWith('file://')) {
-+    const extension = source.split('.').pop();
-+    const url = new URL(`${source}?type=${extension}`);
-+    const { shouldHandle } = await getCustomLoaderResponse(url, null, true);
++  // if (source.startsWith('file://')) {
+   const extension = source.split('.').pop();
+-  const url = new URL('', `${source}?type=${extension}`);
++  const url = new URL(`${source}?type=${extension}`);
+   const { shouldHandle } = await getCustomLoaderResponse(url, null, true);
  
--  if (shouldHandle) {
--    const contents = await fs.readFile(new URL(source), 'utf-8');
--    const { response } = await getCustomLoaderResponse(url, contents);
--    const body = await response.text();
-+    // console.log('should handle?????', shouldHandle);
-+    if (shouldHandle) {
-+      const contents = await fs.readFile(new URL(source), 'utf-8');
-+      const { response } = await getCustomLoaderResponse(url, contents);
-+      const body = await response.text();
- 
--    // TODO better way to handle remove export default?  leverage import assertions instead
--    // https://github.com/ProjectEvergreen/greenwood/issues/923
--    return {
--      format: extension === 'json' ? 'json' : 'module',
--      source: extension === 'json' ? JSON.stringify(JSON.parse(contents.replace('export default ', ''))) : body,
--      shortCircuit: true
--    };
-+      // TODO better way to handle remove export default?  leverage import assertions instead
-+      // https://github.com/ProjectEvergreen/greenwood/issues/923
-+      return {
-+        format: extension === 'json' ? 'json' : 'module',
-+        source: extension === 'json' ? JSON.stringify(JSON.parse(contents.replace('export default ', ''))) : body,
-+        shortCircuit: true
-+      };
-+    }
++  // console.log('should handle?????', shouldHandle);
+   if (shouldHandle) {
+     const contents = await fs.readFile(new URL(source), 'utf-8');
+     const { response } = await getCustomLoaderResponse(url, contents);
+@@ -77,6 +85,7 @@ export async function load(source, context, defaultLoad) {
+       shortCircuit: true
+     };
    }
++  // }
  
    return defaultLoad(source, context, defaultLoad);
+ }
+\ No newline at end of file
