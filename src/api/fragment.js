@@ -15,8 +15,7 @@ export async function handler(request) {
           ? `
               hx-get="/api/fragment?offset=${offset + limit}"
               hx-trigger="revealed"
-              hx-target="#products-results"
-              hx-swap="beforeend"
+              hx-swap="afterend"
             `
           :  '';
 
