@@ -1,0 +1,37 @@
+diff --git a/node_modules/wc-compiler/src/jsx-loader.js b/node_modules/wc-compiler/src/jsx-loader.js
+index bef481b..64774df 100644
+--- a/node_modules/wc-compiler/src/jsx-loader.js
++++ b/node_modules/wc-compiler/src/jsx-loader.js
+@@ -265,11 +265,30 @@ export function parseJsx(moduleURL) {
+ 
+                   applyDomDepthSubstitutions(elementTree, undefined, hasShadowRoot);
+ 
+-                  const finalHtml = serialize(elementTree);
+-                  const transformed = acorn.parse(`${elementRoot}.innerHTML = \`${finalHtml}\`;`, {
++                  const serializedHtml = serialize(elementTree);
++                  // would be nice to reuse HTMLTemplateElement here...
++                  const finalHtml = hasShadowRoot
++                    ? `<template shadowrootmode="open">${serializedHtml}</template>`
++                    : serializedHtml;
++                  const x = hasShadowRoot
++                    ? `
++                        if(!${elementRoot}.shadowRoot) {
++                          const template = document.createElement('template');
++
++                          template.innerHTML = \`${serializedHtml}\`;
++                          this.shadowRoot.appendChild(template.content.cloneNode(true));
++                        }
++                      `
++                    : `${elementRoot}.innerHTML = \`${serializedHtml}\`;`;
++                  console.log({ x });
++                  const transformed = acorn.parse(x, {
+                     ecmaVersion: 'latest',
+                     sourceType: 'module'
+                   });
++                  // const transformed = acorn.parse(`${elementRoot}.innerHTML = \`${finalHtml}\`;`, {
++                  //   ecmaVersion: 'latest',
++                  //   sourceType: 'module'
++                  // });
+ 
+                   n1.value.body.body[n2] = transformed;
+                 }
