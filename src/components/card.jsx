@@ -9,16 +9,12 @@ export default class Card extends HTMLElement {
   }
 
   connectedCallback() {
-    console.log(this);
     if (!this.shadowRoot) {
-      console.log('NO ROOT!');
       this.thumbnail = this.getAttribute('thumbnail');
       this.title = this.getAttribute('title');
 
       this.attachShadow({ mode: 'open' });
       this.render();
-    } else {
-      console.log('ROOT!');
     }
   }
 
@@ -30,6 +26,7 @@ export default class Card extends HTMLElement {
         <style>
           {styles}
         </style>
+
         <h3>{title}</h3>
         <img src={thumbnail} alt={title} loading="lazy" width="100%"/>
         <button onclick={this.selectItem}>View Item Details</button>
