@@ -1,7 +1,5 @@
 import styles from './card.css';
 
-export const inferredObservability = true;
-
 export default class Card extends HTMLElement {
 
   selectItem() {
