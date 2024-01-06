@@ -1,15 +1,11 @@
 import styles from './card.css';
 
+export const inferredObservability = true;
+
 export default class Card extends HTMLElement {
 
   selectItem() {
     alert(`selected item is => ${this.getAttribute('title')}!`);
-  }
-
-  constructor() {
-    super();
-    this.thumbnail; //  = this.getAttribute('thumbnail');
-    this.title; //  = this.getAttribute('title');
   }
 
   connectedCallback() {
