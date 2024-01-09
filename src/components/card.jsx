@@ -3,7 +3,7 @@ import styles from './card.css';
 export default class Card extends HTMLElement {
 
   selectItem() {
-    alert(`selected item is => ${this.getAttribute('title')}!`);
+    alert(`selected item is => ${this.title}!`);
   }
 
   connectedCallback() {
@@ -26,7 +26,7 @@ export default class Card extends HTMLElement {
         </style>
 
         <h3>{title}</h3>
-        <img src={thumbnail} alt={title} loading="lazy" width="100%"/>
+        <img src={thumbnail} alt={title} loading="lazy"/>
         <button onclick={this.selectItem}>View Item Details</button>
       </div>
     )
