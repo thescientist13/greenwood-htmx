@@ -29,7 +29,7 @@ export async function handler(request) {
       }).join('')
     }
   `, [
-    new URL('../components/card.js', import.meta.url)
+    new URL('../components/card.jsx', import.meta.url)
   ]);
 
   return new Response(html, {

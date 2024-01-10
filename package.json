@@ -24,7 +24,8 @@
     "dev": "node --experimental-loader ./node_modules/@greenwood/cli/src/loader.js ./node_modules/.bin/greenwood develop",
     "build": "node --experimental-loader ./node_modules/@greenwood/cli/src/loader.js ./node_modules/.bin/greenwood build",
     "serve": "npm run clean && npm run build && node --experimental-loader ./node_modules/@greenwood/cli/src/loader.js ./node_modules/.bin/greenwood serve",
-    "start": "npm run serve"
+    "start": "npm run serve",
+    "postinstall": "patch-package"
   },
   "dependencies": {
     "htmx.org": "^1.9.4"
@@ -33,9 +34,11 @@
     "wc-compiler": "~0.10.0"
   },
   "devDependencies": {
-    "@greenwood/cli": "~0.29.0",
-    "@greenwood/plugin-adapter-vercel": "~0.29.0",
-    "@greenwood/plugin-import-css": "~0.29.0",
+    "@greenwood/cli": "~0.29.1",
+    "@greenwood/plugin-adapter-vercel": "~0.29.1",
+    "@greenwood/plugin-import-css": "~0.29.1",
+    "@greenwood/plugin-import-jsx": "~0.29.1",
+    "patch-package": "^8.0.0",
     "rimraf": "^5.0.1"
   }
 }
