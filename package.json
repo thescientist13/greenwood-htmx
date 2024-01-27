@@ -29,13 +29,10 @@
   "dependencies": {
     "htmx.org": "^1.9.4"
   },
-  "overrides": {
-    "wc-compiler": "~0.10.0"
-  },
   "devDependencies": {
-    "@greenwood/cli": "~0.29.0",
-    "@greenwood/plugin-adapter-vercel": "~0.29.0",
-    "@greenwood/plugin-import-css": "~0.29.0",
+    "@greenwood/cli": "~0.29.2",
+    "@greenwood/plugin-adapter-vercel": "~0.29.2",
+    "@greenwood/plugin-import-css": "~0.29.2",
     "rimraf": "^5.0.1"
   }
 }
