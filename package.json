@@ -27,7 +27,7 @@
     "start": "npm run serve"
   },
   "dependencies": {
-    "htmx.org": "^1.9.4"
+    "htmx.org": "^2.0.0-alpha1"
   },
   "devDependencies": {
     "@greenwood/cli": "~0.29.2",
