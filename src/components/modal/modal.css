@@ -1,0 +1,30 @@
+dialog {
+  border: 1px solid #818181;
+  text-align: center;
+  width: 40%;
+  border-radius: 10px;
+  padding: 2rem 1rem;
+  min-height: 200px;
+  background-color: #fff;
+  overflow-x: hidden;
+}
+
+h3 {
+  font-size: 1.85rem;
+}
+
+button {
+  background: var(--color-accent);
+  color: var(--color-white);
+  padding: 1rem 2rem;
+  border: 0;
+  font-size: 1rem;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+@media(max-width: 768px) {
+  dialog {
+    width: 80%;
+  }
+}

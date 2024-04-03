@@ -27,7 +27,7 @@ export async function handler(request) {
         }).join('')
       }
     `, [
-      new URL('../components/card.js', import.meta.url)
+      new URL('../components/card/card.js', import.meta.url)
     ]);
 
     body = html;

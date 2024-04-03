@@ -3,7 +3,13 @@ import styles from './card.css';
 export default class Card extends HTMLElement {
 
   selectItem() {
-    alert(`selected item is => ${this.getAttribute('title')}!`);
+    const itemSelectedEvent = new CustomEvent("update-modal", {
+      detail: {
+        content: `You selected the "${this.title}"`,
+      },
+    });
+
+    window.dispatchEvent(itemSelectedEvent);
   }
 
   connectedCallback() {
