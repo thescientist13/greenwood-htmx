@@ -1,4 +1,4 @@
-import styles from './modal.css';
+import styles from './modal.css?type=raw';
 
 const template = document.createElement('template');
 

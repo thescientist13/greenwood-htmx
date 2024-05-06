@@ -21,18 +21,18 @@
   ],
   "scripts": {
     "clean": "rimraf .greenwood public .vercel",
-    "dev": "node --experimental-loader ./node_modules/@greenwood/cli/src/loader.js ./node_modules/.bin/greenwood develop",
-    "build": "node --experimental-loader ./node_modules/@greenwood/cli/src/loader.js ./node_modules/.bin/greenwood build",
-    "serve": "npm run clean && npm run build && node --experimental-loader ./node_modules/@greenwood/cli/src/loader.js ./node_modules/.bin/greenwood serve",
+    "dev": "node --loader ./node_modules/@greenwood/cli/src/loader.js ./node_modules/.bin/greenwood develop",
+    "build": "node --loader ./node_modules/@greenwood/cli/src/loader.js ./node_modules/.bin/greenwood build",
+    "serve": "npm run clean && npm run build && node --loader ./node_modules/@greenwood/cli/src/loader.js ./node_modules/.bin/greenwood serve",
     "start": "npm run serve"
   },
   "dependencies": {
     "htmx.org": "^2.0.0"
   },
   "devDependencies": {
-    "@greenwood/cli": "~0.29.2",
-    "@greenwood/plugin-adapter-vercel": "~0.29.2",
-    "@greenwood/plugin-import-css": "~0.29.2",
+    "@greenwood/cli": "~0.30.0-alpha.2",
+    "@greenwood/plugin-adapter-vercel": "~0.30.0-alpha.2",
+    "@greenwood/plugin-import-raw": "~0.30.0-alpha.2",
     "rimraf": "^5.0.1"
   }
 }
