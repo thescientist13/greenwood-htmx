@@ -1,9 +1,9 @@
 import { greenwoodPluginAdapterVercel } from '@greenwood/plugin-adapter-vercel';
-import { greenwoodPluginImportCss } from '@greenwood/plugin-import-css';
+import { greenwoodPluginImportRaw } from '@greenwood/plugin-import-raw';
 
 export default {
   plugins: [
-    greenwoodPluginImportCss(),
+    greenwoodPluginImportRaw(),
     greenwoodPluginAdapterVercel()
   ]
 };

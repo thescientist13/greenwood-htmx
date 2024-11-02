@@ -1,4 +1,4 @@
-import styles from './card.css';
+import styles from './card.css?type=raw';
 
 export default class Card extends HTMLElement {
 
