@@ -1,6 +1,6 @@
 # greenwood-htmx
 
-A demonstration repo for [**Greenwood**](https://www.greenwoodjs.io/) + [**htmx**](https://htmx.org/) hosted with [**Vercel**](https://vercel.com/) serverless functions.  It is based on the [Greenwood Vercel demo repo](https://github.com/ProjectEvergreen/greenwood-demo-adapter-vercel).
+A demonstration repo for [**Greenwood**](https://www.greenwoodjs.dev/) + [**htmx**](https://htmx.org/) hosted with [**Vercel**](https://vercel.com/) serverless functions.  It is based on the [Greenwood Vercel demo repo](https://github.com/ProjectEvergreen/greenwood-demo-adapter-vercel).
 
 You can see it running live at [https://greenwood-htmx.vercel.app](https://greenwood-htmx.vercel.app).
 
