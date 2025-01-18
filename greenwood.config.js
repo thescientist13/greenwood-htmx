@@ -4,6 +4,8 @@ import { greenwoodPluginImportRaw } from '@greenwood/plugin-import-raw';
 export default {
   plugins: [
     greenwoodPluginImportRaw(),
-    greenwoodPluginAdapterVercel()
+    greenwoodPluginAdapterVercel({
+      runtime: 'nodejs22.x'
+    })
   ]
 };
