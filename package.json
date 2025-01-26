@@ -30,9 +30,9 @@
     "htmx.org": "^2.0.0"
   },
   "devDependencies": {
-    "@greenwood/cli": "~0.31.0-alpha.5",
-    "@greenwood/plugin-adapter-vercel": "~0.31.0-alpha.5",
-    "@greenwood/plugin-import-raw": "~0.31.0-alpha.5",
-    "rimraf": "^5.0.1"
+    "@greenwood/cli": "0.31.0-alpha.6",
+    "@greenwood/plugin-adapter-vercel": "~0.31.0-alpha.6",
+    "@greenwood/plugin-import-raw": "~0.31.0-alpha.6",
+    "rimraf": "^6.0.1"
   }
 }
