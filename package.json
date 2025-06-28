@@ -20,19 +20,17 @@
     "SSR"
   ],
   "scripts": {
-    "clean": "rimraf .greenwood public .vercel",
     "dev": "node --import @greenwood/cli/register ./node_modules/.bin/greenwood develop",
     "build": "node --import @greenwood/cli/register ./node_modules/.bin/greenwood build",
-    "serve": "npm run clean && npm run build && node --import @greenwood/cli/register ./node_modules/.bin/greenwood serve",
+    "serve": "npm run build && node --import @greenwood/cli/register ./node_modules/.bin/greenwood serve",
     "start": "npm run serve"
   },
   "dependencies": {
     "htmx.org": "^2.0.0"
   },
   "devDependencies": {
-    "@greenwood/cli": "~0.32.0",
-    "@greenwood/plugin-adapter-vercel": "~0.32.0",
-    "@greenwood/plugin-import-raw": "~0.32.0",
-    "rimraf": "^6.0.1"
+    "@greenwood/cli": "~0.33.0-alpha.2",
+    "@greenwood/plugin-adapter-vercel": "~0.33.0-alpha.2",
+    "@greenwood/plugin-import-raw": "~0.33.0-alpha.2"
   }
 }
