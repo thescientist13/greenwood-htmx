@@ -29,8 +29,8 @@
     "htmx.org": "^2.0.0"
   },
   "devDependencies": {
-    "@greenwood/cli": "~0.33.0-alpha.8",
-    "@greenwood/plugin-adapter-vercel": "~0.33.0-alpha.8",
-    "@greenwood/plugin-import-raw": "~0.33.0-alpha.8"
+    "@greenwood/cli": "~0.33.0",
+    "@greenwood/plugin-adapter-vercel": "~0.33.0",
+    "@greenwood/plugin-import-raw": "~0.33.0"
   }
 }
